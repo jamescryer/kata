@@ -2,12 +2,16 @@ interface Add {
     (numbers: string): number;
 }
 
-const clean = (str: string): string => str.replace(/^\[|\]$/g, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const delimetersRegExp = /^\/\/(.|\[.*\])\n/;
+const bracketsRegExp = /^\[|\]$/g;
+const escapeRegExp = /[.*+?^${}()|[\]\\]/g;
+const delimeterArgsRegExp = /(\[.+?\])/g;
+
+const clean = (str: string): string => str.replace(bracketsRegExp, '').replace(escapeRegExp, '\\$&');
 
 export const add: Add = (numbers) => {
-    const delimetersRegExp = /^\/\/(.|\[.*\])\n/;
     const [, delimeter] = numbers.match(delimetersRegExp) || [];
-    const multipleDelimeters = delimeter?.match(/(\[.+?\])/g)?.map((str) => clean(str)) || [delimeter || ','];
+    const multipleDelimeters = delimeter?.match(delimeterArgsRegExp)?.map(clean) || [delimeter || ','];
     const delimeters = [...multipleDelimeters, '\n'];
     const errors: number[] = [];
 
