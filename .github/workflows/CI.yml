@@ -1,0 +1,33 @@
+name: CI
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+
+jobs:
+    test:
+        name: Run linters
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 16
+
+            - name: Install Node.js dependencies
+              run: npm ci --ignore-scripts
+
+            - name: Run linters
+              uses: wearerequired/lint-action@v1
+              with:
+                  auto_fix: false
+                  eslint: true
+                  prettier: false
+
+            - name: Test
+              run: npm test
